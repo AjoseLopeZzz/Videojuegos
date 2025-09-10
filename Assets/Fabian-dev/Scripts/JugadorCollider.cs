@@ -10,7 +10,7 @@ public class JugadorCollider : MonoBehaviour
     private float contadorDeRecoleccion;
 
     // Contador de objetos recolectados por el jugador
-    private int objetosRecolectados;
+    public int objetosRecolectados;
 
     // Método llamado cada frame: decrementa el temporizador de recolección
     private void Update()
@@ -38,6 +38,19 @@ public class JugadorCollider : MonoBehaviour
 
                 // Llama al método Recolectar del objeto para reducir su cantidad y actualizar su estado
                 objeto.Recolectar();
+            }
+        }
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.GetComponent<Estructura>() != null)
+        {
+            Estructura estructura = other.gameObject.GetComponent<Estructura>();
+
+            if ( !estructura.EstaActivado && objetosRecolectados >= estructura.MonedasRequeridas)
+            {
+                objetosRecolectados -= estructura.MonedasRequeridas;
+                estructura.Activado();
             }
         }
     }
