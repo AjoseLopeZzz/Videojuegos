@@ -7,7 +7,7 @@ using System;
 
 public class PlayerToolSelector : MonoBehaviour
 {
-    public enum Tool { None,Sow,Water,Harvest}
+    public enum Tool { None, Sow, Water, Harvest }
     private Tool activeTool;
 
     [Header(" Elementos ")]

@@ -8,4 +8,6 @@ public class CropData : ScriptableObject
 {
     [Header(" Configuraciones")]
     public Crop cropPrefab;
+    public CropType cropType;
+    public Sprite icon;
 }

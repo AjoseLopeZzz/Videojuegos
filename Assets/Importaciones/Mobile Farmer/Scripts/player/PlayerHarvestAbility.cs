@@ -8,16 +8,19 @@ using UnityEngine;
 public class PlayerHarvestAbility : MonoBehaviour
 {
     [Header(" Elementos ")]
+    [SerializeField] private Transform harvestSphere;
     private PlayerAnimator playerAnimator;
+    private PlayerToolSelector playerToolSelector;
+    
     [Header(" Configuraciones")]
     private CropField currentCropField;
-    private PlayerToolSelector playerToolSelector;
+    private bool canHarvest;
     void Start()
     {
         playerAnimator = GetComponent<PlayerAnimator>();
         playerToolSelector = GetComponent<PlayerToolSelector>();
 
-//        WaterParticles.onWaterCollided += WaterCollidedCallback;
+
 
         CropField.onFullyHarvested += CropFieldFullyHarvestedCallback;
 
@@ -55,7 +58,11 @@ public class PlayerHarvestAbility : MonoBehaviour
         {
             if (currentCropField == null)
                 currentCropField = cropField;
+
             playerAnimator.PlayHarvestAnimation();
+
+            if (canHarvest)
+                currentCropField.Harvest(harvestSphere);
         }
     }
     private void OnTriggerStay(Collider other)
@@ -76,11 +83,12 @@ public class PlayerHarvestAbility : MonoBehaviour
     }
     public void HarvestingStartedCallback()
     {
-        Debug.Log("Harvesting Started");        
+
+        canHarvest = true;
     }
     public void HarvestingStoppedCallback()
     {
-        Debug.Log("Harvesting Stopped");        
-
+        canHarvest = false;
+        
     }
 }
