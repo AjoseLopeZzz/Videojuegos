@@ -6,20 +6,11 @@ public class PlayerAnimator : MonoBehaviour
 {
     [Header(" Elementos")]
     [SerializeField] private Animator animator;
+    [SerializeField] private ParticleSystem waterParticles;
     
 
     [Header(" Configuraciones")]
     [SerializeField] private float moveSpeedMultiplier;
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
     public void ManageAnimations(Vector3 moveVector)
     {
@@ -52,4 +43,21 @@ public class PlayerAnimator : MonoBehaviour
         animator.SetLayerWeight(1, 0);
     }
 
+    public void PlayWaterAnimation()
+    {        
+        animator.SetLayerWeight(2, 1); 
+    }
+    public void StopWaterAnimation()
+    {
+        animator.SetLayerWeight(2, 0);
+        waterParticles.Stop();
+    }
+    public void PlayHarvestAnimation()
+    {
+        animator.SetLayerWeight(3, 1);
+    }
+    public void StopHarvestAnimation()
+    {
+        animator.SetLayerWeight(3, 0);
+    }
 }

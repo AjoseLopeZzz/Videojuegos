@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Estructura : MonoBehaviour
 {
-    [Range(0f, 1f)]
+    [Range(0f, 10f)]
 
     public int MonedasRequeridas = 10;
     public float cantidadDeTransparencia = 0.3f;
