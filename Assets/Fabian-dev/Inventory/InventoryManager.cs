@@ -29,7 +29,16 @@ public class InventoryManager : MonoBehaviour
     }
     private void CropHarvestedCallback(CropType cropType)
     {
+        //
         inventory.CropHarvestedCallback(cropType);
+        inventoryDisplay.UpdateDisplay(inventory);
+        SaveInventory();
+    }
+    [NaughtyAttributes.Button]
+    private void ClearInventory()
+    {
+        inventory.Clear();
+        inventoryDisplay.UpdateDisplay(inventory);
         SaveInventory();
     }
     private void LoadInventory()
