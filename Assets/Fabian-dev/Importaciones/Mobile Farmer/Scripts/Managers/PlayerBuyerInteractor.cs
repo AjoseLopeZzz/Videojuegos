@@ -19,7 +19,15 @@ public class PlayerBuyerInteractor : MonoBehaviour
     {
         if (other.CompareTag("Buyer"))
         {
-
+            TriggeredBuyer();
         }
+    }
+    private void TriggeredBuyer()
+    {
+        Debug.Log("Vendiendo");
+    }
+    private void SellCrops()
+    {
+
     }
 }
