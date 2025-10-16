@@ -9,9 +9,9 @@ public class PlayerController : MonoBehaviour
     private PlayerAnimator playerAnimator;
     private CharacterController characterController;
 
+    [Header("Configuraciones")]
+    [SerializeField] private float moveSpeed = 5f;
 
-    [Header(" Configuraciones")]
-    [SerializeField] private float moveSpeed;
     void Start()
     {
         characterController = GetComponent<CharacterController>();
@@ -22,14 +22,27 @@ public class PlayerController : MonoBehaviour
     {
         ManageMovement();
     }
+
     private void ManageMovement()
     {
-        Vector3 moveVector = joystick.GetMoveVector() * moveSpeed * Time.deltaTime / Screen.width;
+        Vector3 moveVector = Vector3.zero;
 
-        moveVector.z = moveVector.y;
-        moveVector.y = 0f;
+        float horizontal = Input.GetAxis("Horizontal");
+        float vertical = Input.GetAxis("Vertical");
 
-        characterController.Move(moveVector);
+        if (joystick != null)
+        {
+            Vector2 joyInput = joystick.GetMoveVector();
+            horizontal += joyInput.x;
+            vertical += joyInput.y;
+        }
+
+        moveVector = new Vector3(horizontal, 0f, vertical);
+
+        if (moveVector.magnitude > 1f)
+            moveVector.Normalize();
+
+        characterController.Move(moveVector * moveSpeed * Time.deltaTime);
 
         playerAnimator.ManageAnimations(moveVector);
     }

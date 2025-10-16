@@ -16874,7 +16874,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   joystick: {fileID: 1918435987}
-  moveSpeed: 100
+  moveSpeed: 5
 --- !u!114 &1594268357
 MonoBehaviour:
   m_ObjectHideFlags: 0
