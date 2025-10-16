@@ -1,12 +1,3 @@
 {
-    "items": [
-        {
-            "cropType": 0,
-            "amount": 163
-        },
-        {
-            "cropType": 1,
-            "amount": 99
-        }
-    ]
+    "items": []
 }

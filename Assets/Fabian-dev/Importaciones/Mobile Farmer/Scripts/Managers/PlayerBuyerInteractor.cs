@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class PlayerBuyerInteractor : MonoBehaviour
 {
-    // Start is called before the first frame update
+    [Header("Elementos")]
+    [SerializeField] private InventoryManager inventoryManager;
     void Start()
     {
         
@@ -19,15 +20,23 @@ public class PlayerBuyerInteractor : MonoBehaviour
     {
         if (other.CompareTag("Buyer"))
         {
-            TriggeredBuyer();
+            SellCrops();
         }
     }
-    private void TriggeredBuyer()
-    {
-        Debug.Log("Vendiendo");
-    }
+   
     private void SellCrops()
     {
+        Inventory inventory = inventoryManager.GetInventory();
+        InventoryItem[] items = inventory.GetInventoryItems();
 
+        int coinsEarned = 0;
+        for (int i = 0; i < items.Length; i++)
+        {
+            int itemPrice = DataManager.instance.GetCropPriceFromCropType(items[i].cropType);
+            coinsEarned += itemPrice * items[i].amount;
+        }
+        
+        CashManager.instance.AddCoins(coinsEarned);
+        inventoryManager.ClearInventory();
     }
 }
