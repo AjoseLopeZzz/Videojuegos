@@ -22,7 +22,7 @@ public class CropTIle : MonoBehaviour
         state = TileFieldState.Empty;
     }
 
-    
+
     public void Sow(CropData cropData)
     {
         state = TileFieldState.Sown;
@@ -35,7 +35,7 @@ public class CropTIle : MonoBehaviour
     {
         state = TileFieldState.Empty;
         crop.ScaleDown();
-        
+
         StartCoroutine(ColorTileCoroutine(1f));
 
         onCropHarvested?.Invoke(cropData.cropType);
@@ -43,7 +43,7 @@ public class CropTIle : MonoBehaviour
     public void Water()
     {
         state = TileFieldState.Watered;
-        crop.ScaleUp();        
+        crop.ScaleUp();
         StartCoroutine(ColorTileCoroutine(.3f));
     }
 
@@ -54,7 +54,7 @@ public class CropTIle : MonoBehaviour
 
         // punto de partida = el color actual del material
         Color startColor = tileRenderer.material.color;
-        // punto final = el blanco multiplicado por tu parámetro
+        
         Color targetColor = Color.white * colorSuelo;
 
         while (timer < duration)
@@ -72,7 +72,7 @@ public class CropTIle : MonoBehaviour
 
     public bool IsEmpty()
     {
-        return state == TileFieldState.Empty; 
+        return state == TileFieldState.Empty;
     }
     public bool IsSown()
     {

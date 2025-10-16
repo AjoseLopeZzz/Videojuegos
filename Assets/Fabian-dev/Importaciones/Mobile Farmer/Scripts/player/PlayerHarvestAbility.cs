@@ -11,7 +11,7 @@ public class PlayerHarvestAbility : MonoBehaviour
     [SerializeField] private Transform harvestSphere;
     private PlayerAnimator playerAnimator;
     private PlayerToolSelector playerToolSelector;
-    
+
     [Header(" Configuraciones")]
     private CropField currentCropField;
     private bool canHarvest;
@@ -43,7 +43,7 @@ public class PlayerHarvestAbility : MonoBehaviour
     {
         if (cropField == currentCropField)
             playerAnimator.StopHarvestAnimation();
-    }    
+    }
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("CropField") && other.GetComponent<CropField>().IsWatered())
@@ -89,6 +89,6 @@ public class PlayerHarvestAbility : MonoBehaviour
     public void HarvestingStoppedCallback()
     {
         canHarvest = false;
-        
+
     }
 }

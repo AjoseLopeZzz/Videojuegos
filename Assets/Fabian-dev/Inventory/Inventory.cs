@@ -40,7 +40,7 @@ public class Inventory
     {
         foreach(InventoryItem item in items)
         {
-            Debug.Log("tenemos " + item.amount + " items " + item.cropType );
+         //   Debug.Log("tenemos " + item.amount + " items " + item.cropType );
         }
     }
 }

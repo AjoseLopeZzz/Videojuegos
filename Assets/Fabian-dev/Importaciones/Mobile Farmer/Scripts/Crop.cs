@@ -21,6 +21,7 @@ public class Crop : MonoBehaviour
         harvestedParticles.transform.parent = null;
         harvestedParticles.gameObject.SetActive(true);
         harvestedParticles.Play();
+        Debug.Log("Deberiafuncionar");
     }
 
     private IEnumerator ScaleRoutine(Vector3 targetScale, float duration, bool destroyOnEnd = false)
@@ -42,11 +43,11 @@ public class Crop : MonoBehaviour
 
         cropRenderer.localScale = targetScale;
 
-        if (destroyOnEnd)
-            DestroyCrop();
+     //   if (destroyOnEnd)
+       //     DestroyCrop();
     }
 
-    // Función para simular LeanTweenType.easeOutBack
+    // Funcn para simular LeanTweenType.easeOutBack
     private float EaseOutBack(float t)
     {
         float c1 = 1.70158f;
