@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     [Header("Elementos")]
-    [SerializeField] private MobileJoystick joystick;
+    //[SerializeField] private MobileJoystick joystick;
     private PlayerAnimator playerAnimator;
     private CharacterController characterController;
 
@@ -30,13 +30,13 @@ public class PlayerController : MonoBehaviour
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
 
-        if (joystick != null)
+       /* if (joystick != null)
         {
             Vector2 joyInput = joystick.GetMoveVector();
             horizontal += joyInput.x;
             vertical += joyInput.y;
         }
-
+        */
         moveVector = new Vector3(horizontal, 0f, vertical);
 
         if (moveVector.magnitude > 1f)

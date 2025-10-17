@@ -44,4 +44,15 @@ public void UpdateCoinContainers()
     {
         PlayerPrefs.SetInt("Coins", coins);
     }
+    public int GetCoins()
+    {
+        return coins;
+    }
+    public void RemoveCoins(int amount)
+    {
+        coins -= amount;
+        if (coins < 0) coins = 0;
+        UpdateCoinContainers();
+        SaveData();
+    }
 }
