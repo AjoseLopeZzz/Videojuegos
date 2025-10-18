@@ -3,9 +3,11 @@ using UnityEngine.UI;
 
 public class ZoneUnlocker : MonoBehaviour
 {
-    [Header("Configuración")]
+    [Header("Configuración de Zona")]
     [SerializeField] private GameObject zonaBloqueada;
-    [SerializeField] private int costo = 10;
+    [SerializeField] private int costoMonedas = 10;
+    [SerializeField] private int costoMaiz = 20;
+    [SerializeField] private int costoTomate = 15;
 
     private bool jugadorEnZona;
     private bool zonaComprada = false;
@@ -15,6 +17,18 @@ public class ZoneUnlocker : MonoBehaviour
     private Button btnAddCoins;
     private Button btnBuyZone;
     private Button btnShowCoins;
+
+    private void OnEnable()
+    {
+        // Suscribirse al evento cuando se recolecten cultivos especiales
+        InventoryManager.onSpecialCropCollected += CheckZoneUnlockByCrops;
+    }
+
+    private void OnDisable()
+    {
+        // Cancelar suscripción para evitar errores
+        InventoryManager.onSpecialCropCollected -= CheckZoneUnlockByCrops;
+    }
 
     void Start()
     {
@@ -34,8 +48,8 @@ public class ZoneUnlocker : MonoBehaviour
 
             int monedasActuales = CashManager.instance != null ? CashManager.instance.GetCoins() : 0;
 
-            if (monedasActuales >= costo)
-                Debug.Log("Puedes comprar la zona. Usa el botón 'Comprar Zona'.");
+            if (monedasActuales >= costoMonedas)
+                Debug.Log("Puedes comprar la zona con monedas. Usa el botón 'Comprar Zona'.");
             else
                 Debug.Log("No tienes suficientes monedas para desbloquear esta zona.");
         }
@@ -50,31 +64,56 @@ public class ZoneUnlocker : MonoBehaviour
         }
     }
 
+    // ==========================
+    //  DESBLOQUEO CON MONEDAS
+    // ==========================
     public void ComprarZona()
     {
         if (CashManager.instance == null) return;
 
         int monedasActuales = CashManager.instance.GetCoins();
 
-        if (monedasActuales >= costo)
+        if (monedasActuales >= costoMonedas)
         {
-            CashManager.instance.RemoveCoins(costo);
-
-            if (zonaBloqueada != null)
-                zonaBloqueada.SetActive(false);
-
-            zonaComprada = true;
-
-            // Oculta el botón de compra definitivamente
-            if (btnBuyZone != null)
-                btnBuyZone.gameObject.SetActive(false);
-
-            Debug.Log("Zona desbloqueada con éxito. El botón de compra se ha desactivado.");
+            CashManager.instance.RemoveCoins(costoMonedas);
+            DesbloquearZona("monedas");
         }
         else
         {
             Debug.Log("No tienes suficientes monedas.");
         }
+    }
+
+    // ==========================
+    // DESBLOQUEO CON CULTIVOS
+    // ==========================
+    private void CheckZoneUnlockByCrops(CropType cropType, int cantidad)
+    {
+        if (zonaComprada) return;
+
+        if (cropType == CropType.Corn && cantidad >= costoMaiz)
+        {
+            DesbloquearZona("maíz");
+        }
+        else if (cropType == CropType.Tomato && cantidad >= costoTomate)
+        {
+            DesbloquearZona("tomate");
+        }
+    }
+
+    private void DesbloquearZona(string metodo)
+    {
+        if (zonaBloqueada != null)
+            zonaBloqueada.SetActive(false);
+
+        zonaComprada = true;
+
+        if (btnBuyZone != null)
+            btnBuyZone.gameObject.SetActive(false);
+
+        testCanvas.gameObject.SetActive(false);
+
+        Debug.Log($"Zona desbloqueada exitosamente con {metodo}.");
     }
 
     // ==========================
