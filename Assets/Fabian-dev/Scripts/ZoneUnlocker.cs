@@ -20,86 +20,95 @@ public class ZoneUnlocker : MonoBehaviour
 
     private void OnEnable()
     {
-        // Suscribirse al evento cuando se recolecten cultivos especiales
-        InventoryManager.onSpecialCropCollected += CheckZoneUnlockByCrops;
+        // Escuchar el evento de inventario
+        //InventoryManager.onSpecialCropCollected += CheckZoneUnlockByCrops;
     }
 
     private void OnDisable()
     {
-        // Cancelar suscripción para evitar errores
-        InventoryManager.onSpecialCropCollected -= CheckZoneUnlockByCrops;
+        //InventoryManager.onSpecialCropCollected -= CheckZoneUnlockByCrops;
     }
 
     void Start()
     {
         CrearBotonesDePrueba();
-        testCanvas.gameObject.SetActive(false); // ocultar al inicio
+
+        // Ocultar botones al inicio
+        testCanvas.gameObject.SetActive(false);
+
+        // Verificar si los managers existen
+        if (CashManager.instance == null)
+            Debug.LogWarning("No se encontró CashManager.instance en la escena.");
+
+        if (InventoryManager.instance == null)
+            Debug.LogWarning("No se encontró InventoryManager.instance en la escena.");
     }
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
-        {
-            jugadorEnZona = true;
+        if (!other.CompareTag("Player")) return;
 
-            // Solo mostrar si no se ha comprado todavía
-            if (!zonaComprada)
-                testCanvas.gameObject.SetActive(true);
+        jugadorEnZona = true;
 
-            int monedasActuales = CashManager.instance != null ? CashManager.instance.GetCoins() : 0;
+        if (!zonaComprada)
+            testCanvas.gameObject.SetActive(true);
 
-            if (monedasActuales >= costoMonedas)
-                Debug.Log("Puedes comprar la zona con monedas. Usa el botón 'Comprar Zona'.");
-            else
-                Debug.Log("No tienes suficientes monedas para desbloquear esta zona.");
-        }
+        VerificarRequisitos();
     }
 
     void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Player"))
-        {
-            jugadorEnZona = false;
-            testCanvas.gameObject.SetActive(false);
-        }
+        if (!other.CompareTag("Player")) return;
+
+        jugadorEnZona = false;
+        testCanvas.gameObject.SetActive(false);
     }
 
     // ==========================
-    //  DESBLOQUEO CON MONEDAS
+    // DESBLOQUEO CON MONEDAS Y CULTIVOS
     // ==========================
+    
     public void ComprarZona()
     {
-        if (CashManager.instance == null) return;
+        if (zonaComprada) return;
+        if (CashManager.instance == null || InventoryManager.instance == null) return;
 
-        int monedasActuales = CashManager.instance.GetCoins();
+        int monedas = CashManager.instance.GetCoins();
+        int maiz = InventoryManager.instance.GetCropAmount(CropType.Corn);
+        int tomate = InventoryManager.instance.GetCropAmount(CropType.Tomato);
 
-        if (monedasActuales >= costoMonedas)
+        if (monedas >= costoMonedas && maiz >= costoMaiz && tomate >= costoTomate)
         {
             CashManager.instance.RemoveCoins(costoMonedas);
-            DesbloquearZona("monedas");
+            InventoryManager.instance.RemoveCrop(CropType.Corn, costoMaiz);
+            InventoryManager.instance.RemoveCrop(CropType.Tomato, costoTomate);
+
+            DesbloquearZona("monedas + cultivos");
         }
         else
         {
-            Debug.Log("No tienes suficientes monedas.");
+            Debug.Log($" Requisitos insuficientes. Necesitas {costoMonedas} monedas, {costoMaiz} maíces y {costoTomate} tomates.");
         }
     }
-
+   
     // ==========================
-    // DESBLOQUEO CON CULTIVOS
+    // DESBLOQUEO AUTOMÁTICO (AL RECOGER CULTIVOS)
     // ==========================
+    /*
     private void CheckZoneUnlockByCrops(CropType cropType, int cantidad)
     {
-        if (zonaComprada) return;
+        if (zonaComprada || InventoryManager.instance == null) return;
 
-        if (cropType == CropType.Corn && cantidad >= costoMaiz)
+        int maiz = InventoryManager.instance.GetCropAmount(CropType.Corn);
+        int tomate = InventoryManager.instance.GetCropAmount(CropType.Tomato);
+
+        if (maiz >= costoMaiz && tomate >= costoTomate)
         {
-            DesbloquearZona("maíz");
+            InventoryManager.instance.RemoveCrop(CropType.Corn, costoMaiz);
+            InventoryManager.instance.RemoveCrop(CropType.Tomato, costoTomate);
+            DesbloquearZona("cultivos automáticos");
         }
-        else if (cropType == CropType.Tomato && cantidad >= costoTomate)
-        {
-            DesbloquearZona("tomate");
-        }
-    }
+    }*/
 
     private void DesbloquearZona(string metodo)
     {
@@ -113,25 +122,35 @@ public class ZoneUnlocker : MonoBehaviour
 
         testCanvas.gameObject.SetActive(false);
 
-        Debug.Log($"Zona desbloqueada exitosamente con {metodo}.");
+        Debug.Log($" Zona desbloqueada exitosamente con {metodo}.");
     }
 
     // ==========================
-    //      BOTONES DE PRUEBA
+    // VERIFICAR ESTADO DE RECURSOS
+    // ==========================
+    private void VerificarRequisitos()
+    {
+        int monedas = CashManager.instance != null ? CashManager.instance.GetCoins() : 0;
+        int maiz = InventoryManager.instance != null ? InventoryManager.instance.GetCropAmount(CropType.Corn) : 0;
+        int tomate = InventoryManager.instance != null ? InventoryManager.instance.GetCropAmount(CropType.Tomato) : 0;
+
+        Debug.Log($" Monedas: {monedas}/{costoMonedas} |  Maíz: {maiz}/{costoMaiz} |  Tomate: {tomate}/{costoTomate}");
+    }
+
+    // ==========================
+    // BOTONES DE PRUEBA
     // ==========================
     private void CrearBotonesDePrueba()
     {
-        // Crear un Canvas temporal en pantalla
         GameObject canvasObj = new GameObject("ZoneUnlocker_TestCanvas");
         testCanvas = canvasObj.AddComponent<Canvas>();
         testCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
         canvasObj.AddComponent<CanvasScaler>();
         canvasObj.AddComponent<GraphicRaycaster>();
 
-        // Crear los botones
-        btnAddCoins = CrearBoton("Agregar +10", new Vector2(100, -60), AddCoinsTest);
+        btnAddCoins = CrearBoton("Agregar +10 monedas", new Vector2(100, -60), AddCoinsTest);
         btnBuyZone = CrearBoton("Comprar Zona", new Vector2(100, -110), ComprarZona);
-        btnShowCoins = CrearBoton("Mostrar Monedas", new Vector2(100, -160), ShowCoinsTest);
+        btnShowCoins = CrearBoton("Mostrar Estado", new Vector2(100, -160), VerificarRequisitos);
     }
 
     private Button CrearBoton(string texto, Vector2 posicion, UnityEngine.Events.UnityAction accion)
@@ -140,7 +159,7 @@ public class ZoneUnlocker : MonoBehaviour
         botonObj.transform.SetParent(testCanvas.transform);
 
         RectTransform rect = botonObj.AddComponent<RectTransform>();
-        rect.sizeDelta = new Vector2(180, 40);
+        rect.sizeDelta = new Vector2(200, 45);
         rect.anchorMin = new Vector2(0, 1);
         rect.anchorMax = new Vector2(0, 1);
         rect.pivot = new Vector2(0, 1);
@@ -174,13 +193,7 @@ public class ZoneUnlocker : MonoBehaviour
         if (CashManager.instance != null)
         {
             CashManager.instance.AddCoins(10);
-            Debug.Log("Se añadieron 10 monedas.");
+            Debug.Log(" Se añadieron 10 monedas.");
         }
-    }
-
-    private void ShowCoinsTest()
-    {
-        if (CashManager.instance != null)
-            Debug.Log("Monedas actuales: " + CashManager.instance.GetCoins());
     }
 }

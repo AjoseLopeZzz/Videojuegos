@@ -75,4 +75,31 @@ public class Inventory
             }
         }
     }
+    // dentro de la clase Inventory
+    public void SetCropAmount(CropType type, int amount)
+    {
+        // Si amount es 0 o menos, eliminamos el ítem si existe.
+        for (int i = 0; i < items.Count; i++)
+        {
+            if (items[i].cropType == type)
+            {
+                if (amount <= 0)
+                {
+                    items.RemoveAt(i);
+                }
+                else
+                {
+                    items[i].amount = amount;
+                }
+                return;
+            }
+        }
+
+        // Si no existe y amount > 0, lo añadimos
+        if (amount > 0)
+        {
+            items.Add(new InventoryItem(type, amount));
+        }
+    }
+
 }

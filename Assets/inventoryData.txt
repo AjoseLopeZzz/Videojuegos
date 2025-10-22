@@ -3,6 +3,10 @@
         {
             "cropType": 0,
             "amount": 1
+        },
+        {
+            "cropType": 1,
+            "amount": 8
         }
     ]
 }
