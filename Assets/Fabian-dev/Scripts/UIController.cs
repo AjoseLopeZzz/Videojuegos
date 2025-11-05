@@ -17,6 +17,6 @@ public class UIController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        objetosTMP.text = "Objetos: " + jugadorCollider.objetosRecolectados;
+        objetosTMP.text = ""+ jugadorCollider.objetosRecolectados;
     }
 }

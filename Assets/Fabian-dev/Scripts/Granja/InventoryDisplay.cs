@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class InventoryDisplay : MonoBehaviour
@@ -8,16 +6,7 @@ public class InventoryDisplay : MonoBehaviour
     [SerializeField] private Transform cropContainersParent;
     [SerializeField] private UICropContainer uiCropContainerPrefab;
     
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+  
     public void Configure(Inventory inventory)
     {
         InventoryItem[] items = inventory.GetInventoryItems();

@@ -6,7 +6,7 @@ using System.IO;
 [RequireComponent(typeof(InventoryDisplay))]
 public class InventoryManager : MonoBehaviour
 {
-    // Instancia global
+    // Instancia global (Singleton)
     public static InventoryManager instance;
 
     private Inventory inventory;
@@ -18,7 +18,7 @@ public class InventoryManager : MonoBehaviour
 
     private void Awake()
     {
-        // Asignar instancia singleton
+        // Asignar instancia única
         if (instance == null)
             instance = this;
         else
@@ -27,9 +27,13 @@ public class InventoryManager : MonoBehaviour
 
     void Start()
     {
-        dataPath = Application.dataPath + "/inventoryData.txt";
+        // Ruta de guardado (solo usada en escritorio/móvil)
+        dataPath = Path.Combine(Application.persistentDataPath, "inventoryData.txt");
+
         LoadInventory();
         ConfigureInventoryDisplay();
+
+        // Suscribirse al evento de cosecha
         CropTIle.onCropHarvested += CropHarvestedCallback;
     }
 
@@ -69,27 +73,52 @@ public class InventoryManager : MonoBehaviour
         SaveInventory();
     }
 
+    // ==========================
+    // MÉTODOS DE GUARDADO / CARGA
+    // ==========================
+
     private void LoadInventory()
     {
-        string data = "";
-        if (File.Exists(dataPath))
+#if UNITY_WEBGL
+        // En WebGL usamos PlayerPrefs (no hay acceso al sistema de archivos)
+        if (PlayerPrefs.HasKey("inventoryData"))
         {
-            data = File.ReadAllText(dataPath);
+            string data = PlayerPrefs.GetString("inventoryData");
             inventory = JsonUtility.FromJson<Inventory>(data);
             if (inventory == null)
                 inventory = new Inventory();
         }
         else
         {
-            File.Create(dataPath);
             inventory = new Inventory();
         }
+#else
+        // En PC/Móvil usamos archivo persistente
+        if (File.Exists(dataPath))
+        {
+            string data = File.ReadAllText(dataPath);
+            inventory = JsonUtility.FromJson<Inventory>(data);
+            if (inventory == null)
+                inventory = new Inventory();
+        }
+        else
+        {
+            inventory = new Inventory();
+            File.WriteAllText(dataPath, ""); // crea archivo vacío
+        }
+#endif
     }
 
     public void SaveInventory()
     {
         string data = JsonUtility.ToJson(inventory, true);
+
+#if UNITY_WEBGL
+        PlayerPrefs.SetString("inventoryData", data);
+        PlayerPrefs.Save();
+#else
         File.WriteAllText(dataPath, data);
+#endif
     }
 
     public Inventory GetInventory()
@@ -126,5 +155,4 @@ public class InventoryManager : MonoBehaviour
 
         Debug.Log($"Se descontaron {cantidad} de {type}. Nuevo total: {nuevaCantidad}");
     }
-
 }

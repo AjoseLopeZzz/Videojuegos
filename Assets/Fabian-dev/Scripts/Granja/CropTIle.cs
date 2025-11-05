@@ -39,6 +39,9 @@ public class CropTIle : MonoBehaviour
         StartCoroutine(ColorTileCoroutine(1f));
 
         onCropHarvested?.Invoke(cropData.cropType);
+
+
+
     }
     public void Water()
     {
