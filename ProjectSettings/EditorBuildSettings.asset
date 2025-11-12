@@ -4,5 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Fabian-dev/Scenes/Minar 2.unity
+    guid: 6353c402a8eecca4395cc581d0293338
   m_configObjects: {}
