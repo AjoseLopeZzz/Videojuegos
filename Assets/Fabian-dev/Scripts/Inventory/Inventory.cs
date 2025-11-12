@@ -5,22 +5,26 @@ public class Inventory
 {
     [SerializeField] private List<InventoryItem> items = new List<InventoryItem>();
 
+    /// <summary>
+    /// Se llama cuando se cosecha un cultivo.
+    /// Si ya existe en la lista, incrementa su cantidad.
+    /// Si no existe, lo agrega.
+    /// </summary>
     public void CropHarvestedCallback(CropType cropType)
     {
         bool cropFound = false;
+
         for (int i = 0; i < items.Count; i++)
         {
             InventoryItem item = items[i];
             if (item.cropType == cropType)
             {
                 item.amount++;
+                items[i] = item; // aseguramos que el cambio quede guardado (struct-safe)
                 cropFound = true;
                 break;
             }
         }
-        DebugInventory();
-        if (cropFound)
-            return;
 
         items.Add(new InventoryItem(cropType, 1));
     }
@@ -42,6 +46,7 @@ public class Inventory
             // Debug.Log("tenemos " + item.amount + " items " + item.cropType);
         }
     }
+
     public int GetCropAmount(CropType type)
     {
         foreach (InventoryItem item in items)
@@ -52,8 +57,7 @@ public class Inventory
         return 0;
     }
 
-
-    //  NUEVOS MÉTODOS (no reemplazan ninguno)
+    //  NUEVOS MeTODOS (no reemplazan ninguno)
     public int GetAmountOfCrop(CropType type)
     {
         foreach (InventoryItem item in items)
@@ -75,10 +79,11 @@ public class Inventory
             }
         }
     }
+
     // dentro de la clase Inventory
     public void SetCropAmount(CropType type, int amount)
     {
-        // Si amount es 0 o menos, eliminamos el ítem si existe.
+        // Si amount es 0 o menos, eliminamos el Ã­tem si existe.
         for (int i = 0; i < items.Count; i++)
         {
             if (items[i].cropType == type)
@@ -95,11 +100,10 @@ public class Inventory
             }
         }
 
-        // Si no existe y amount > 0, lo añadimos
+        // Si no existe y amount > 0, lo anadimos
         if (amount > 0)
         {
             items.Add(new InventoryItem(type, amount));
         }
     }
-
 }

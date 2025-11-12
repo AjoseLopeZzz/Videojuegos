@@ -8,7 +8,7 @@ public class UICropContainer : MonoBehaviour
 {
     [Header("Elementos")]
     [SerializeField] private Image iconImage;
-    [SerializeField] private TextMeshProUGUI amountText;    
+    [SerializeField] private TextMeshProUGUI amountText;
     public void Configure(Sprite icon, int amount)
     {
         iconImage.sprite = icon;
